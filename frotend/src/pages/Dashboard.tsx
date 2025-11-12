@@ -20,13 +20,15 @@ import React, { useEffect, useState } from "react";
 import {
   createProduct,
   deleteproduct,
+  fetchAllPurchasedBill,
   getAllProducts,
 } from "../services/productApi";
 
 const Dashboard = () => {
   const [products, setpProducts] = useState();
-  const [deleteId, setDeleteId] = useState(null);
+  const [editingId,setEditingId] = useState(null)
   const [open, setOpen] = React.useState(false);
+  const [purchasedBills,setAllPurchasedBill] = useState()
   const [formdata, setFormData] = useState({
     product_name: "",
     price: null,
@@ -43,6 +45,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchAllProducts();
+    fetchAllPurchasedBills()
   }, []);
 
   const fetchAllProducts = async () => {
@@ -54,6 +57,15 @@ const Dashboard = () => {
       console.log("Error in fetching products", error);
     }
   };
+
+  const fetchAllPurchasedBills = async () =>{
+    try {
+      const response = await fetchAllPurchasedBill() 
+      console.log("Bill response",response)
+    } catch (error) {
+      console.log("Error in ")
+    }
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -68,6 +80,10 @@ const Dashboard = () => {
       taxPercentage: null,
     });
   };
+
+  const handleEdit = (id:number) =>{
+      setEditingId(id)
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -92,7 +108,7 @@ const Dashboard = () => {
   const handleDelete = async (deleteId: number) => {
     try {
       console.log(deleteId)
-      await deleteproduct(deleteId);
+      await deleteproduct(Number(deleteId));
       fetchAllProducts();
     } catch (error) {
       console.log("Error in deletind product");
@@ -140,14 +156,15 @@ const Dashboard = () => {
                   <Button
                     onClick={() => {
                       handleDelete(product.product_id);
-                      setDeleteId(product.product_id);
                     }}
                   >
                     Delete
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <Button>Edit</Button>
+                  <Button onClick={()=>{setEditingId(product.product_id)
+                  handleEdit(product.product_id)
+                  }}>Edit</Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -213,6 +230,56 @@ const Dashboard = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+
+      {/* <Typography textAlign={"center"} mt={4} variant="h4">ALL Purchased Bills</Typography>
+       <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Bill Id</TableCell>
+              <TableCell>Purchased Product</TableCell>
+              <TableCell>Purchased Quantity</TableCell>
+              <TableCell>Tax %</TableCell>
+              <TableCell>SKU</TableCell>
+              <TableCell sx={{ textAlign: "center" }} colSpan={2}>
+                Actions
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {products?.map((product: any) => (
+              <TableRow
+                key={product.product_id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {product.product_id}
+                </TableCell>
+                <TableCell>{product.product_name}</TableCell>
+                <TableCell>{product.currentStock}</TableCell>
+                <TableCell>{product.taxPercentage}</TableCell>
+                <TableCell>{product.SKU}</TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => {
+                      handleDelete(product.product_id);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button onClick={()=>{setEditingId(product.product_id)
+                  handleEdit(product.product_id)
+                  }}>Edit</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer> */}
+
     </Box>
   );
 };

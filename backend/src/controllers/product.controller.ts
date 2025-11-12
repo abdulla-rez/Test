@@ -75,7 +75,7 @@ export const getAllProducts = async(req:any,res:any,next:NextFunction)=>{
 
 export const deleteProduct = async(req:any,res:any,next:NextFunction)=>{
     try {
-        const {p_Id} = req.body
+        const p_Id = req.params.id
         console.log(p_Id)
 
         const product = await findProductById(p_Id)

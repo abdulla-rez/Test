@@ -7,6 +7,7 @@ import { findUserById } from "../services/auth.service";
 import { billRepo } from "./purchase.controller";
 import { billType } from "../entities/Bill.entity";
 import { productRepo } from "./product.controller";
+import { fetchSaledBill } from "../services/purchase.service";
 
 export const salerepo = AppDataSource.getRepository(SalesEntry);
 
@@ -66,3 +67,18 @@ export const saleProduct = async (req: any, res: any, next: NextFunction) => {
     next(error);
   }
 };
+
+
+export const getAllSaledBill= async(req:any,res:any,next:NextFunction)=>{
+  try {
+      const getAllSales = await fetchSaledBill()
+      console.log("getAllPurchases",getAllSales)
+      res.status(200).json({
+        success:true,
+        message:"Purchases fetched successfully",
+        data:getAllSales
+      })
+  } catch (error) {
+    next(error)
+  }
+}

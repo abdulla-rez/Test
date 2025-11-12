@@ -11,7 +11,7 @@ const productRoutes = Router()
 productRoutes.post('/create',createProduct)
 productRoutes.get('/all',getAllProducts)
 productRoutes.get('/:id',getSingleproduct)
-productRoutes.delete('/delete',deleteProduct)
+productRoutes.delete('/delete/:id',deleteProduct)
 productRoutes.put('/update/:id',updateProduct)
 
 export default productRoutes
