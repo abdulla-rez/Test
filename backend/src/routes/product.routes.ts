@@ -5,7 +5,7 @@ import { UserRole } from "../entities/User.entity";
 
 const productRoutes = Router()
 
-productRoutes.use(authenticate)
+// productRoutes.use(authenticate)
 
 
 productRoutes.post('/create',createProduct)

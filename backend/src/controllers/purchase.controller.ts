@@ -6,6 +6,7 @@ import { ApiError } from "../utils/apiError";
 import { findUserById } from "../services/auth.service";
 import { Bill, billType } from "../entities/Bill.entity";
 import { productRepo } from "./product.controller";
+import { fetchAllPurchases } from "../services/purchase.service";
 
 export const purchaserepo = AppDataSource.getRepository(PurcharseEntry);
 export const billRepo = AppDataSource.getRepository(Bill);
@@ -84,6 +85,20 @@ export const addStock = async (req:any,res:any,next:NextFunction) =>{
         success:true,
         message:"Stock increased",
         product
+      })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const getAllPurchases = async(req:any,res:any,next:NextFunction)=>{
+  try {
+      const getAllPurchases = await fetchAllPurchases()
+      res.status(200).json({
+        success:true,
+        message:"Purchases fetched successfully",
+        data:getAllPurchases
       })
   } catch (error) {
     next(error)

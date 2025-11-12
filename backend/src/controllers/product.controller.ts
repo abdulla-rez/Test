@@ -17,9 +17,8 @@ export const productRepo = AppDataSource.getRepository(Product)
 
 export const createProduct = async(req: any,res:any,next:NextFunction)=>{
     try {
-        console.log("Hiiii")
         const {product_name,price,currentStock,taxPercentage} = req.body
-        console.log("req.body in product controller",req.product_name)
+        console.log("req.body in product controller",req.body)
 
         const productExists = await findProductByName(product_name)
 
