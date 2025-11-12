@@ -18,14 +18,24 @@ export class Bill {
     billType:billType
 
     @OneToOne(()=>PurcharseEntry,(purchase_product)=>purchase_product.purchasedBill)
+    @JoinColumn({name:"purchaseId"})
     purchased_product:PurcharseEntry
 
+    @Column({nullable:true})
+    purchaseId:number
+
     @OneToOne(()=>SalesEntry,(sale)=>sale.saledProduct)
+    @JoinColumn({name:"saleId"})
     saled_product:SalesEntry
 
-   @ManyToOne(()=>User,(user)=>user.bills)
-   @JoinColumn({name:"userId"})
-   billedSatff:User
+    @Column({nullable:true})
+    saleId:number
+
+    @ManyToOne(()=>User,(user)=>user.bills)
+    @JoinColumn({name:"userId"})
+    billedSatff:User
+
+    
 
    @Column()
    userId:number

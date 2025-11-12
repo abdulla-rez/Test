@@ -10,8 +10,8 @@ export class SalesEntry{
     @Column()
     quantity:number
 
-    @Column()
-    total_price:number
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    final_price:number
 
     @CreateDateColumn()
     sale_date:Date

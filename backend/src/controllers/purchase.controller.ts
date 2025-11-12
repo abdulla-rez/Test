@@ -5,6 +5,7 @@ import { findProductById } from "../services/product.service";
 import { ApiError } from "../utils/apiError";
 import { findUserById } from "../services/auth.service";
 import { Bill, billType } from "../entities/Bill.entity";
+import { productRepo } from "./product.controller";
 
 export const purchaserepo = AppDataSource.getRepository(PurcharseEntry);
 export const billRepo = AppDataSource.getRepository(Bill);
@@ -30,10 +31,13 @@ export const purchaseProducts = async (
       throw new ApiError("Product not found", 404);
     }
 
+    
     const total_price = quantity * product.price;
     const taxed_amount =
       total_price + (total_price * product.taxPercentage) / 100;
 
+      product.currentStock += quantity
+      await productRepo.save(product)
 
       const newPurchase = purchaserepo.create({
         quantity,
@@ -61,3 +65,27 @@ export const purchaseProducts = async (
     next(error);
   }
 };
+
+export const addStock = async (req:any,res:any,next:NextFunction) =>{
+  try {
+      const {pId,quantity} =  req.body
+
+      const product = await findProductById(pId)
+
+      if(!product){
+        throw new ApiError("Product not found",404)
+      }
+
+      product.currentStock += quantity
+
+      await productRepo.save(product)
+
+      res.status(200).json({
+        success:true,
+        message:"Stock increased",
+        product
+      })
+  } catch (error) {
+    next(error)
+  }
+}
