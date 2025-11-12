@@ -3,10 +3,19 @@ import { PurcharseEntry } from "./PurchaseEntry.entity";
 import { SalesEntry } from "./SalesEntry.entity";
 import { User } from "./User.entity";
 
+
+export enum billType  {
+    SALE="sale",
+    PURCHASE="purchase"
+}
+
 @Entity()
 export class Bill {
     @PrimaryGeneratedColumn()
     bill_id : number
+
+    @Column({nullable:true,type:"enum",enum:billType,default:billType.PURCHASE})
+    billType:billType
 
     @OneToOne(()=>PurcharseEntry,(purchase_product)=>purchase_product.purchasedBill)
     purchased_product:PurcharseEntry

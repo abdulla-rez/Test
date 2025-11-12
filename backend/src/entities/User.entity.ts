@@ -13,7 +13,7 @@ import { Bill } from "./Bill.entity";
 export class User {
 
     @PrimaryGeneratedColumn()
-    user_id: string
+    user_id: number
     
     @Column()
     name: string

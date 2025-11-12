@@ -12,3 +12,7 @@ export const createUser = async (userData: Partial<User>) => {
     userRepo.save(user)
     return user
 }
+
+export const findUserById = async(id:number) =>{
+    return await userRepo.findOne({where:{user_id:id}})
+}

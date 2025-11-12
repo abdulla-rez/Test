@@ -6,9 +6,12 @@ import { UserRole } from "../entities/User.entity";
 const productRoutes = Router()
 
 productRoutes.use(authenticate)
-productRoutes.get('/all-products',getAllProducts)
+
+
+productRoutes.post('/create',createProduct)
+productRoutes.get('/all',getAllProducts)
 productRoutes.get('/:id',getSingleproduct)
-
-
+productRoutes.delete('/delete',deleteProduct)
+productRoutes.put('/update/:id',updateProduct)
 
 export default productRoutes

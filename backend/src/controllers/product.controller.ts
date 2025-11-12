@@ -17,8 +17,9 @@ export const productRepo = AppDataSource.getRepository(Product)
 
 export const createProduct = async(req: any,res:any,next:NextFunction)=>{
     try {
+        console.log("Hiiii")
         const {product_name,price,currentStock,taxPercentage} = req.body
-        const {image} = req.file
+        console.log("req.body in product controller",req.product_name)
 
         const productExists = await findProductByName(product_name)
 
@@ -33,7 +34,6 @@ export const createProduct = async(req: any,res:any,next:NextFunction)=>{
             price,
             currentStock,
             taxPercentage,
-            image,
             SKU:uuid
         })
 
@@ -77,10 +77,12 @@ export const getAllProducts = async(req:any,res:any,next:NextFunction)=>{
 export const deleteProduct = async(req:any,res:any,next:NextFunction)=>{
     try {
         const {p_Id} = req.body
+        console.log(p_Id)
 
         const product = await findProductById(p_Id)
+        console.log(product)
 
-        if(product){
+        if(!product){
             throw new ApiError("Product not found",404)
         }
 
@@ -118,10 +120,11 @@ export const getSingleproduct = async(req:any,res:any,next:NextFunction)=>{
 
 export const updateProduct = async(req:any,res:any,next:NextFunction)=>{
     try {
+        const {pId} = req.params.id
         const {product_name,price,currentStock,taxPercentage} = req.body 
-        const {image} = req.file
+        
 
-        const productExists = await findProductByName(product_name)
+        const productExists = await findProductById(pId)
 
         if(!productExists){
             throw new ApiError("Product not found",404)
@@ -131,9 +134,10 @@ export const updateProduct = async(req:any,res:any,next:NextFunction)=>{
         if(price) productExists.price = price
         if(currentStock) productExists.currentStock = currentStock
         if(taxPercentage) productExists.taxPercentage= taxPercentage
-        if(image) productExists.image = image
 
+        console.log(productExists)
         await productRepo.save(productExists)
+
 
         res.status(200).json({
             success:true,

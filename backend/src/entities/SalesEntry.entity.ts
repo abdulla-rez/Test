@@ -21,6 +21,9 @@ export class SalesEntry{
     saledProduct:Product
 
     @Column()
+    tax:number
+
+    @Column()
     productId:number
 
     @OneToOne(()=>Bill,(bill)=>bill.saled_product)
