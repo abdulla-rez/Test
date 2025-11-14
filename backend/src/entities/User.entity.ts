@@ -31,5 +31,4 @@ export class User {
    @OneToMany(()=>Bill,(bill)=>bill.billedStaff)
    bills:Bill[]
 
-
 }

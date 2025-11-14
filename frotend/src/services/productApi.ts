@@ -28,3 +28,8 @@ export const updateProduct = async(id:any,data:any)=>{
     console.log("Hiii")
     return await commonAPI(`PUT`,`http://localhost:4000/product/update/${id}`,data)
 }
+
+export const createSale = async(payload:any)=>{
+    console.log("PAYLOAD FROM SERVICE",payload)
+    return await commonAPI('POST',`http://localhost:4000/sell/sale`,{payload})
+}

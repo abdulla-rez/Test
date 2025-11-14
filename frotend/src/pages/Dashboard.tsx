@@ -26,11 +26,11 @@ import {
 } from "../services/productApi";
 
 const Dashboard = () => {
-  const [products, setpProducts] = useState();
+  const [products, setpProducts] = useState<any>();
   const [open, setOpen] = React.useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const [formdata, setFormData] = useState({
     product_name: "",
@@ -107,7 +107,7 @@ const Dashboard = () => {
     });
   };
 
-  const handleEdit = (product) => {
+  const handleEdit = (product:any) => {
     setEditingId(product.product_id);
     setSelectedProduct(product);
 
@@ -197,7 +197,6 @@ const Dashboard = () => {
                 <TableCell>{product.SKU}</TableCell>
 
                 <TableCell>
-                  {/* FIXED: pass product */}
                   <Button onClick={() => handleAddOpen(product)}>
                     Add Stock
                   </Button>

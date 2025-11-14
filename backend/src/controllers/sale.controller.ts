@@ -17,7 +17,9 @@ const saleItemRepo= AppDataSource.getRepository(SaleItem)
 
 export const saleProduct = async (req: any, res: any, next: NextFunction) => {
   try {
-    const { items } = req.body;
+
+    const {payload} = req.body
+    let items = payload
 
     if (!items || items.length === 0) {
       throw new ApiError("No items ", 404);
@@ -114,46 +116,3 @@ export const getAllSaledBill= async(req:any,res:any,next:NextFunction)=>{
     next(error)
   }
 }
-
-
-
-
-
-
-
-
-//  const user = await findUserById(userId);
-
-//     if (!user) {
-//       throw new ApiError("User not found", 404);
-//     }
-
-//     if(product.currentStock == 0 || product.currentStock < quantity){
-//         throw new ApiError("Insufficient stock",404)
-//     }
-
-//     const total_price = price * quantity;
-//     const taxed_amount = total_price + (total_price * tax) / 100;
-//     const discountPrice = taxed_amount - (taxed_amount * discount) / 100;
-
-//     product.currentStock -= quantity
-//     await productRepo.save(product)
-
-//     const newSale = salerepo.create({
-//       quantity,
-//       productId: product.product_id,
-//       final_price: discountPrice,
-//       tax,
-//     });
-
-
-//     await salerepo.save(newSale);
-  
-//     const newBill = billRepo.create({
-//       saleId:newSale.sales_id,
-//       billedSatff: user,
-//       billType: billType.SALE,
-//     });
-
-
-//     await billRepo.save(newBill);

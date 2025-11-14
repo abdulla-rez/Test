@@ -17,6 +17,6 @@ export const fetchSaledBill = async () => {
     where: {
       purchaseId: IsNull(), 
       saleId: Not(IsNull()),
-    },relations:['saled_product','saled_product.saledProduct']
+    },relations:['saled_product','saled_product.saleItem','saled_product.saleItem.product']
   });
 };
