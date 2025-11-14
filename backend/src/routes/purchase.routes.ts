@@ -4,9 +4,9 @@ import { addStock, getAllPurchasedBill,  purchaseProducts } from "../controllers
 
 const purchaseRoutes = Router()
 
-purchaseRoutes.use(authenticate)
+// purchaseRoutes.use(authenticate)
+purchaseRoutes.get('/all',getAllPurchasedBill)
 purchaseRoutes.post('/buy',purchaseProducts)
 purchaseRoutes.post('/stockAdd',addStock)
-purchaseRoutes.get('/all',getAllPurchasedBill)
 
 export default purchaseRoutes

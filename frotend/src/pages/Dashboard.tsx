@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Paper,
   Table,
@@ -18,17 +17,21 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
+  addStock,
   createProduct,
   deleteproduct,
   fetchAllPurchasedBill,
   getAllProducts,
+  updateProduct,
 } from "../services/productApi";
 
 const Dashboard = () => {
   const [products, setpProducts] = useState();
-  const [editingId,setEditingId] = useState(null)
   const [open, setOpen] = React.useState(false);
-  const [purchasedBills,setAllPurchasedBill] = useState()
+  const [addOpen, setAddOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const [formdata, setFormData] = useState({
     product_name: "",
     price: null,
@@ -36,43 +39,66 @@ const Dashboard = () => {
     taxPercentage: null,
   });
 
+  const [quantity, setQuantity] = useState(0);
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormData((prev) => ({ ...prev, [name]: value }));
-    console.log(formdata);
+  };
+
+  const handleQuantityChange = (e: any) => {
+    setQuantity(Number(e.target.value));
   };
 
   useEffect(() => {
     fetchAllProducts();
-    fetchAllPurchasedBills()
+    fetchAllPurchasedBills();
   }, []);
 
   const fetchAllProducts = async () => {
     try {
       const response = await getAllProducts();
-      console.log(response.data.data);
       setpProducts(response.data.data);
     } catch (error) {
       console.log("Error in fetching products", error);
     }
   };
 
-  const fetchAllPurchasedBills = async () =>{
+  const fetchAllPurchasedBills = async () => {
     try {
-      const response = await fetchAllPurchasedBill() 
-      console.log("Bill response",response)
+      const response = await fetchAllPurchasedBill();
+      console.log("Bill response", response);
     } catch (error) {
-      console.log("Error in ")
+      console.log("Error in ");
     }
-  }
+  };
 
   const handleClickOpen = () => {
+    setEditingId(null);
+    setSelectedProduct(null);
+    setFormData({
+      product_name: "",
+      price: null,
+      currentStock: null,
+      taxPercentage: null,
+    });
     setOpen(true);
+  };
+
+  const handleAddOpen = (product: any) => {
+    setSelectedProduct(product);
+    setAddOpen(true);
+  };
+
+  const handleAddClose = () => {
+    setAddOpen(false);
+    setQuantity(0);
   };
 
   const handleClose = () => {
     setOpen(false);
+    setEditingId(null);
+    setSelectedProduct(null);
     setFormData({
       product_name: "",
       price: null,
@@ -81,37 +107,56 @@ const Dashboard = () => {
     });
   };
 
-  const handleEdit = (id:number) =>{
-      setEditingId(id)
-  }
+  const handleEdit = (product) => {
+    setEditingId(product.product_id);
+    setSelectedProduct(product);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    setFormData({
+      product_name: product.product_name,
+      price: product.price,
+      currentStock: product.currentStock,
+      taxPercentage: product.taxPercentage,
+    });
+
+    setOpen(true);
+  };
+
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
+
     try {
-      const response = await createProduct(formdata);
-      console.log(formdata);
-      console.log("Response", response);
-      setFormData({
-        product_name: "",
-        price: null,
-        currentStock: null,
-        taxPercentage: null,
-      });
-      handleClose()
+      if (editingId) {
+        await updateProduct(editingId, formdata);
+      } else {
+        await createProduct(formdata);
+      }
 
-      await fetchAllProducts();
+      handleClose();
+      fetchAllProducts();
     } catch (error) {
-      console.log("Error in creating product");
+      console.log("Error in create/update", error);
     }
   };
 
-  const handleDelete = async (deleteId: number) => {
+  const handleDelete = async (deleteId: any) => {
     try {
-      console.log(deleteId)
       await deleteproduct(Number(deleteId));
       fetchAllProducts();
     } catch (error) {
       console.log("Error in deletind product");
+    }
+  };
+
+  const handleSubmitAddStock = async (e: any) => {
+    e.preventDefault();
+    const payload = { prouct_id: selectedProduct?.product, quantity: quantity };
+    try {
+      await addStock(payload);
+      setQuantity(0);
+      setAddOpen(false);
+      fetchAllProducts();
+    } catch (error) {
+      console.log("error");
     }
   };
 
@@ -126,45 +171,46 @@ const Dashboard = () => {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+        <Table sx={{ minWidth: 650 }} size="small">
           <TableHead>
             <TableRow>
               <TableCell>Product ID </TableCell>
               <TableCell>Product Name</TableCell>
+              <TableCell>Product Price</TableCell>
               <TableCell>Current Stock</TableCell>
               <TableCell>Tax %</TableCell>
               <TableCell>SKU</TableCell>
-              <TableCell sx={{ textAlign: "center" }} colSpan={2}>
+              <TableCell colSpan={3} style={{ textAlign: "center" }}>
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {products?.map((product: any) => (
-              <TableRow
-                key={product.product_id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {product.product_id}
-                </TableCell>
+              <TableRow key={product.product_id}>
+                <TableCell>{product.product_id}</TableCell>
                 <TableCell>{product.product_name}</TableCell>
+                <TableCell>₹ {product.price}</TableCell>
                 <TableCell>{product.currentStock}</TableCell>
                 <TableCell>{product.taxPercentage}</TableCell>
                 <TableCell>{product.SKU}</TableCell>
+
                 <TableCell>
-                  <Button
-                    onClick={() => {
-                      handleDelete(product.product_id);
-                    }}
-                  >
+                  {/* FIXED: pass product */}
+                  <Button onClick={() => handleAddOpen(product)}>
+                    Add Stock
+                  </Button>
+                </TableCell>
+
+                <TableCell>
+                  <Button onClick={() => handleDelete(product.product_id)}>
                     Delete
                   </Button>
                 </TableCell>
+
                 <TableCell>
-                  <Button onClick={()=>{setEditingId(product.product_id)
-                  handleEdit(product.product_id)
-                  }}>Edit</Button>
+                  <Button onClick={() => handleEdit(product)}>Edit</Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -172,14 +218,16 @@ const Dashboard = () => {
         </Table>
       </TableContainer>
 
-      <Dialog fullWidth={true} maxWidth="sm" open={open} onClose={handleClose}>
-        <DialogTitle>Create product</DialogTitle>
+      <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
+        <DialogTitle>
+          {editingId ? "Update Product" : "Create Product"}
+        </DialogTitle>
         <DialogContent>
-          <form onSubmit={handleSubmit} id="subscription-form">
+          <form onSubmit={handleSubmit} id="create-form">
             <TextField
               fullWidth
               required
-              label="PRoduct Name"
+              label="Product Name"
               name="product_name"
               value={formdata.product_name}
               onChange={handleChange}
@@ -187,6 +235,7 @@ const Dashboard = () => {
               variant="outlined"
               size="small"
             />
+
             <TextField
               fullWidth
               required
@@ -199,6 +248,7 @@ const Dashboard = () => {
               variant="outlined"
               size="small"
             />
+
             <TextField
               fullWidth
               required
@@ -210,6 +260,7 @@ const Dashboard = () => {
               variant="outlined"
               size="small"
             />
+
             <TextField
               fullWidth
               required
@@ -223,63 +274,39 @@ const Dashboard = () => {
             />
           </form>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit" form="subscription-form">
-            Create Product
+          <Button type="submit" form="create-form">
+            {editingId ? "Update" : "Create"}
           </Button>
         </DialogActions>
       </Dialog>
 
-
-      {/* <Typography textAlign={"center"} mt={4} variant="h4">ALL Purchased Bills</Typography>
-       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Bill Id</TableCell>
-              <TableCell>Purchased Product</TableCell>
-              <TableCell>Purchased Quantity</TableCell>
-              <TableCell>Tax %</TableCell>
-              <TableCell>SKU</TableCell>
-              <TableCell sx={{ textAlign: "center" }} colSpan={2}>
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products?.map((product: any) => (
-              <TableRow
-                key={product.product_id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {product.product_id}
-                </TableCell>
-                <TableCell>{product.product_name}</TableCell>
-                <TableCell>{product.currentStock}</TableCell>
-                <TableCell>{product.taxPercentage}</TableCell>
-                <TableCell>{product.SKU}</TableCell>
-                <TableCell>
-                  <Button
-                    onClick={() => {
-                      handleDelete(product.product_id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button onClick={()=>{setEditingId(product.product_id)
-                  handleEdit(product.product_id)
-                  }}>Edit</Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
-
+      <Dialog fullWidth maxWidth="sm" open={addOpen} onClose={handleAddClose}>
+        <DialogTitle>Add Stock</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleSubmitAddStock} id="add-stock-form">
+            <TextField
+              fullWidth
+              required
+              label="Quantity"
+              name="quantity"
+              value={quantity}
+              onChange={handleQuantityChange}
+              margin="normal"
+              variant="outlined"
+              size="small"
+            />
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddClose}>Cancel</Button>
+          <Button type="submit" form="add-stock-form">
+            Add Stock
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

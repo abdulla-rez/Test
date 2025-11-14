@@ -5,7 +5,7 @@ import { getAllSaledBill, saleProduct } from "../controllers/sale.controller";
 
 const saleRoutes = Router()
 
-saleRoutes.use(authenticate)
+// saleRoutes.use(authenticate)
 saleRoutes.post('/sale',saleProduct)
 saleRoutes.get('/all',getAllSaledBill)
 

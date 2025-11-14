@@ -7,6 +7,7 @@ import { Bill } from "../entities/Bill.entity";
 import { Product } from "../entities/Product.entity";
 import { SalesEntry } from "../entities/SalesEntry.entity";
 import { PurcharseEntry } from "../entities/PurchaseEntry.entity";
+import { SaleItem } from "../entities/SaleItem.entity";
 
 
 export const AppDataSource = new DataSource({
@@ -19,5 +20,5 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: false,
 
-    entities: [User,Bill,Product,SalesEntry,PurcharseEntry],
+    entities: [User,Bill,Product,SalesEntry,PurcharseEntry,SaleItem],
 });

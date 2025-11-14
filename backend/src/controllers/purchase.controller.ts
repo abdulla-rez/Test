@@ -18,7 +18,7 @@ export const purchaseProducts = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body)
+    console.log("hiii")
     const { pId, quantity } = req.body;
 const userId = req.user.id;
 
@@ -51,7 +51,7 @@ const userId = req.user.id;
       await purchaserepo.save(newPurchase)
       const newBill = billRepo.create({
         purchased_product:newPurchase,
-        billedSatff:user,
+        billedStaff:user,
         billType:billType.PURCHASE
       })
 
@@ -73,6 +73,7 @@ const userId = req.user.id;
 export const addStock = async (req:any,res:any,next:NextFunction) =>{
   try {
       const {pId,quantity} =  req.body
+
 
       const product = await findProductById(pId)
 
@@ -97,10 +98,8 @@ export const addStock = async (req:any,res:any,next:NextFunction) =>{
 
 export const getAllPurchasedBill= async(req:any,res:any,next:NextFunction)=>{
   try {
-    console.log("Hiiii")
       const getAllPurchases = await fetchAllPurchasedBill()
 
-      console.log("getAllPurchases",getAllPurchases)
       res.status(200).json({
         success:true,
         message:"Purchases fetched successfully",

@@ -25,15 +25,16 @@ export const createProduct = async(req: any,res:any,next:NextFunction)=>{
         if(productExists){
             throw new ApiError("Product already exixts",409)
         }
-
-        const uuid = crypto.randomUUID();
+let first_three = product_name.slice(0, 3).toUpperCase();
+        let randomNum = Math.floor(Math.random() * 900) + 100;
+        let SKU = first_three +" "+ randomNum
 
         const newProduct = productRepo.create({
             product_name,
             price,
             currentStock,
             taxPercentage,
-            SKU:uuid
+            SKU
         })
 
 
@@ -75,9 +76,9 @@ export const getAllProducts = async(req:any,res:any,next:NextFunction)=>{
 
 export const deleteProduct = async(req:any,res:any,next:NextFunction)=>{
     try {
-        const p_Id = req.params.id
+        const p_Id= req.params.id
         console.log(p_Id)
-
+        
         const product = await findProductById(p_Id)
         console.log(product)
 
@@ -121,7 +122,7 @@ export const updateProduct = async(req:any,res:any,next:NextFunction)=>{
     try {
         const {pId} = req.params.id
         const {product_name,price,currentStock,taxPercentage} = req.body 
-        
+        console.log("Hiiiiiiiiiiiiiiiiiii")
 
         const productExists = await findProductById(pId)
 

@@ -28,7 +28,7 @@ export class User {
     @Column()
     password: string
 
-   @OneToMany(()=>Bill,(bill)=>bill.billedSatff)
+   @OneToMany(()=>Bill,(bill)=>bill.billedStaff)
    bills:Bill[]
 
 

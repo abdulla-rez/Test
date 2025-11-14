@@ -7,7 +7,7 @@ export const getAllProducts = async()=>{
 
 
 export const deleteproduct = async(id:number)=>{
-    return await commonAPI('DELETE',`${baseURL}product/delete/${id}`)
+    return await commonAPI('DELETE',`http://localhost:4000/product/delete/${id}`)
 }
 
 export const createProduct = async (FormData:any)=>{
@@ -18,4 +18,13 @@ return await commonAPI('POST',`${baseURL}/product/create`,FormData)
 
 export const fetchAllPurchasedBill = async () =>{
     return await commonAPI ('GET',`${baseURL}/purchase/all`)
+}
+
+export const addStock = async(data:any)=>{
+    return await commonAPI(`POST`,`http://localhost:4000/purchase/stockAdd`,data)
+}
+
+export const updateProduct = async(id:any,data:any)=>{
+    console.log("Hiii")
+    return await commonAPI(`PUT`,`http://localhost:4000/product/update/${id}`,data)
 }
